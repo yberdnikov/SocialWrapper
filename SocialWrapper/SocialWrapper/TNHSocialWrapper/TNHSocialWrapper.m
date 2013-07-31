@@ -52,7 +52,6 @@ static NSString *const kKeychainItemName        = @"Wrapper: Google Contacts";
 #if __FACEBOOK_ENABLED__
         if (!self.session.isOpen) {
             self.session = [[FBSession alloc] initWithPermissions:@[@"email"]];
-            [FBSession setActiveSession:self.session];
             if (self.session.state == FBSessionStateCreatedTokenLoaded) {
                 [self.session openWithCompletionHandler:nil];
             }
@@ -145,6 +144,11 @@ static NSString *const kKeychainItemName        = @"Wrapper: Google Contacts";
 #pragma mark - Facebook wrapper
 @synthesize session = _session;
 
+- (void)setSession:(FBSession *)session {
+    _session = session;
+    [FBSession setActiveSession:_session];
+}
+
 - (BOOL)handleOpenURL:(NSURL *)url
     sourceApplication:(NSString *)sourceApplication {
     return [FBAppCall handleOpenURL:url
@@ -163,8 +167,8 @@ static NSString *const kKeychainItemName        = @"Wrapper: Google Contacts";
 - (void)loginFacebookWithCompletionBlock:(void(^)(BOOL success))block {
     if (self.session.state != FBSessionStateCreated) {
         self.session = [[FBSession alloc] initWithPermissions:@[@"email"]];
-        [FBSession setActiveSession:self.session];
     }
+
     [self.session openWithBehavior:FBSessionLoginBehaviorForcingWebView completionHandler:^(FBSession *session, FBSessionState status, NSError *error) {
         BOOL success = YES;
         if (error) {

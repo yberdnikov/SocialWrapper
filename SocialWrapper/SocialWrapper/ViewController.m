@@ -63,7 +63,9 @@
 
 #pragma mark - Google
 - (IBAction)loginGoogle:(id)sender {
-    [[TNHSocialWrapper sharedWrapper] loginGooglePlusFromViewController:self];
+    if (![[TNHSocialWrapper sharedWrapper] isAuthorizedWithGooglePlus]) {
+        [[TNHSocialWrapper sharedWrapper] loginGooglePlusFromViewController:self];
+    }
 }
 
 - (IBAction)sharePlus:(id)sender {
